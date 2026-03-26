@@ -3,29 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keylytics Pro | Steno Editor</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Keylytics PRO | Steno Skill Test</title>
+    <style>
+        /* Modern CSS - Isse interface chamak jayega */
+        :root { --primary: #2563eb; --dark: #0f172a; --bg: #f8fafc; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        .navbar { 
+            background: white; padding: 15px 40px; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); z-index: 100;
+        }
+        .brand { font-size: 26px; font-weight: 800; color: var(--dark); letter-spacing: -1px; }
+        .brand span { color: var(--primary); font-size: 10px; margin-left: 5px; border: 1.5px solid var(--primary); padding: 2px 5px; border-radius: 4px; vertical-align: middle; }
+
+        .stats-wrap { display: flex; gap: 40px; background: #f1f5f9; padding: 10px 30px; border-radius: 50px; }
+        .stat-box { text-align: center; font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 1px; }
+        .stat-box b { display: block; font-size: 22px; color: var(--dark); font-family: 'Courier New', monospace; }
+
+        .actions { display: flex; gap: 12px; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .btn-save { background: var(--primary); color: white; }
+        .btn-text { background: white; color: var(--dark); border: 1px solid #e2e8f0; }
+        .btn-reset { background: #fee2e2; color: #dc2626; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
+
+        .editor-main { flex: 1; padding: 30px; display: flex; justify-content: center; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); }
+        #typing-box { 
+            width: 100%; max-width: 1100px; background: white; 
+            border: 1px solid #e2e8f0; border-radius: 20px; padding: 45px; 
+            font-family: 'Courier New', Courier, monospace; font-size: 24px; 
+            line-height: 1.8; color: #1e293b; outline: none; resize: none; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        #typing-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+    </style>
 </head>
 <body>
     <header class="navbar">
         <div class="brand">Keylytics<span>PRO</span></div>
-        <div class="stats-container">
+        <div class="stats-wrap">
             <div class="stat-box">TIME <b id="timer">00:00</b></div>
             <div class="stat-box">WPM <b id="wpm">0</b></div>
             <div class="stat-box">WORDS <b id="word-count">0</b></div>
         </div>
         <div class="actions">
-            <button id="save-pdf-btn" class="btn btn-blue">Save PDF</button>
-            <button id="save-txt-btn" class="btn btn-gray">Save Text</button>
-            <button onclick="location.reload()" class="btn btn-red">Reset</button>
+            <button id="save-pdf-btn" class="btn btn-save">Save PDF</button>
+            <button id="save-txt-btn" class="btn btn-text">Save Text</button>
+            <button onclick="location.reload()" class="btn btn-reset">Reset</button>
         </div>
     </header>
 
-    <main class="editor-wrap">
-        <textarea id="typing-box" spellcheck="false" placeholder="Type your transcription here..."></textarea>
+    <main class="editor-main">
+        <textarea id="typing-box" spellcheck="false" placeholder="Transcription yahan shuru karein..."></textarea>
     </main>
 
-    <script src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        let startTime, timerInterval, isStarted = false;
+        const typingBox = document.getElementById('typing-box');
+
+        typingBox.addEventListener('input', () => {
+            if (!isStarted) {
+                isStarted = true;
+                startTime = Date.now();
+                timerInterval = setInterval(updateStats, 1000);
+            }
+            let text = typingBox.value.trim();
+            let words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('word-count').innerText = words;
+        });
+
+        function updateStats() {
+            let diffSecs = Math.floor((Date.now() - startTime) / 1000);
+            let m = Math.floor(diffSecs / 60).toString().padStart(2, '0');
+            let s = (diffSecs % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${m}:${s}`;
+            
+            let wordCount = parseInt(document.getElementById('word-count').innerText);
+            if (diffSecs > 1) {
+                let wpm = Math.round(wordCount / (diffSecs / 60));
+                document.getElementById('wpm').innerText = wpm || 0;
+            }
+        }
+
+        document.getElementById('save-pdf-btn').onclick = () => {
+            const el = document.createElement('div');
+            el.innerHTML = `<h1 style="color:#2563eb; font-family:sans-serif;">Steno Transcription</h1><p style="white-space:pre-wrap; font-family:monospace; font-size:18px; line-height:1.6; margin-top:20px;">${typingBox.value}</p>`;
+            html2pdf().set({ margin: 20, filename: 'Keylytics_Steno.pdf' }).from(el).save();
+        };
+
+        document.getElementById('save-txt-btn').onclick = () => {
+            const blob = new Blob([typingBox.value], { type: "text/plain" });
+            const a = document.createElement("a"); a.download = "note.txt"; a.href = URL.createObjectURL(blob); a.click();
+        };
+    </script>
 </body>
 </html>

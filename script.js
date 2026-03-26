@@ -8,43 +8,39 @@ typingBox.addEventListener('input', () => {
         timerInterval = setInterval(updateStats, 1000);
     }
     
-    // Live Stats
+    // Live Word Count
     let text = typingBox.value.trim();
-    let wordsArr = text ? text.split(/\s+/) : [];
-    document.getElementById('word-count').innerText = wordsArr.length;
+    let words = text ? text.split(/\s+/).length : 0;
+    document.getElementById('word-count').innerText = words;
 });
 
 function updateStats() {
     let now = Date.now();
-    let diffInSeconds = Math.floor((now - startTime) / 1000);
+    let diffSecs = Math.floor((now - startTime) / 1000);
     
     // Timer
-    let m = Math.floor(diffInSeconds / 60).toString().padStart(2, '0');
-    let s = (diffInSeconds % 60).toString().padStart(2, '0');
+    let m = Math.floor(diffSecs / 60).toString().padStart(2, '0');
+    let s = (diffSecs % 60).toString().padStart(2, '0');
     document.getElementById('timer').innerText = `${m}:${s}`;
     
-    // WPM Logic
-    let words = parseInt(document.getElementById('word-count').innerText);
-    let mins = diffInSeconds / 60;
-    let wpm = Math.round(words / mins) || 0;
-    if (diffInSeconds > 0) document.getElementById('wpm').innerText = wpm;
+    // Accurate WPM
+    let wordCount = parseInt(document.getElementById('word-count').innerText);
+    if (diffSecs > 1) {
+        let wpm = Math.round(wordCount / (diffSecs / 60));
+        document.getElementById('wpm').innerText = wpm || 0;
+    }
 }
 
-// Save PDF
 document.getElementById('save-pdf-btn').onclick = () => {
     const text = typingBox.value;
-    if (!text) return alert("Kuch type karein!");
-    const element = document.createElement('div');
-    element.innerHTML = `<h2 style="margin-bottom:20px;">Keylytics Document</h2><p style="white-space:pre-wrap; font-family:'Courier New'; line-height:1.8;">${text}</p>`;
-    html2pdf().set({ margin: 15, filename: 'Steno_Practice.pdf' }).from(element).save();
+    if (!text) return alert("Kuch likho!");
+    const el = document.createElement('div');
+    el.innerHTML = `<h2 style="color:#2563eb;">Keylytics Note</h2><p style="white-space:pre-wrap; font-family:monospace;">${text}</p>`;
+    html2pdf().set({ margin: 20, filename: 'note.pdf' }).from(el).save();
 };
 
-// Save Text
 document.getElementById('save-txt-btn').onclick = () => {
-    const text = typingBox.value;
-    const blob = new Blob([text], { type: "text/plain" });
+    const blob = new Blob([typingBox.value], { type: "text/plain" });
     const a = document.createElement("a");
-    a.download = "Steno_Note.txt";
-    a.href = window.URL.createObjectURL(blob);
-    a.click();
+    a.download = "note.txt"; a.href = URL.createObjectURL(blob); a.click();
 };

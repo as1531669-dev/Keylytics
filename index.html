@@ -2,42 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Keylytics | SSC Steno Exam Portal</title>
+    <title>Keylytics Pro | SSC Steno Skill Test</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="exam-header">
-        <div class="header-left">Staff Selection Commission - Skill Test Simulation</div>
-        <div class="header-right">Time Remaining: <b id="timer">10:00</b></div>
+        <div class="header-left">
+            <span class="logo-text">Keylytics <span>PRO</span></span>
+        </div>
+        <div class="header-right">
+            <span>Time Elapsed: <b id="timer">00:00</b></span>
+            <span>WPM: <b id="wpm">0</b></span>
+        </div>
     </div>
+
     <div class="main-layout">
         <div class="sidebar">
-            <div class="photo-box">CANDIDATE PHOTO</div>
-            <p>Name: <b>ANKUSH</b></p>
-            <p>Subject: <b>Stenography (English)</b></p>
-            <hr>
-            <p style="font-size: 11px; color: #666;">Note: Background check enabled. Final evaluation after Submit.</p>
+            <div class="user-card">
+                <div class="photo">ANKUSH</div>
+                <p>Roll: 220104XXXX</p>
+                <p>Post: Grade C & D</p>
+            </div>
+            <div class="instructions">
+                <h4>Exam Instructions:</h4>
+                <ul>
+                    <li>Type according to your shorthand notes.</li>
+                    <li>Timer starts on your first keypress.</li>
+                    <li>Final evaluation will show full mistakes.</li>
+                </ul>
+            </div>
         </div>
+
         <div class="typing-container">
             <textarea id="master-text" style="display: none;"></textarea>
-            <textarea id="typing-box" spellcheck="false" placeholder="Start typing your shorthand transcription here..."></textarea>
+            <textarea id="typing-box" spellcheck="false" placeholder="Start transcribing here..."></textarea>
         </div>
     </div>
+
     <div class="footer">
-        <button id="final-submit">Final Submit</button>
+        <button id="reset-btn" onclick="location.reload()">Reset Test</button>
+        <button id="final-submit">Submit & Analyze</button>
     </div>
+
     <div id="result-modal" class="modal">
         <div class="modal-content">
-            <h3>Evaluation Report</h3>
+            <div class="modal-header">
+                <h2>Skill Test Performance Report</h2>
+                <button id="download-pdf" class="btn-save">Save as PDF 📄</button>
+            </div>
             <div class="res-stats">
-                <span>Total Words: <b id="res-total">0</b></span>
-                <span>Mistakes: <b id="res-errors" style="color:red">0</b></span>
-                <span>Accuracy: <b id="res-acc">0%</b></span>
+                <div class="stat-card">Total Words<br><b id="res-total">0</b></div>
+                <div class="stat-card">Mistakes<br><b id="res-errors" style="color:#e74c3c">0</b></div>
+                <div class="stat-card">Accuracy<br><b id="res-acc">0%</b></div>
             </div>
             <div id="analysis-view" class="analysis-box"></div>
-            <button onclick="location.reload()">New Test</button>
+            <button class="btn-close" onclick="location.reload()">Close & Restart</button>
         </div>
     </div>
+
     <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>

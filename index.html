@@ -2,63 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Keylytics Pro | SSC Steno Skill Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keylytics | Professional Document Editor</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="exam-header">
-        <div class="header-left">
-            <span class="logo-text">Keylytics <span>PRO</span></span>
+    <header class="main-header">
+        <div class="brand">Keylytics<span>PRO</span></div>
+        <div class="live-info">
+            <div class="info-box">Time: <b id="timer">00:00</b></div>
+            <div class="info-box">Words: <b id="word-count">0</b></div>
         </div>
-        <div class="header-right">
-            <span>Time Elapsed: <b id="timer">00:00</b></span>
-            <span>WPM: <b id="wpm">0</b></span>
+        <div class="btn-group">
+            <button id="save-pdf-btn" class="btn btn-pdf">Save as PDF 📄</button>
+            <button id="save-txt-btn" class="btn btn-txt">Save as Text 📝</button>
+            <button onclick="location.reload()" class="btn btn-reset">Reset</button>
         </div>
-    </div>
+    </header>
 
-    <div class="main-layout">
-        <div class="sidebar">
-            <div class="user-card">
-                <div class="photo">ANKUSH</div>
-                <p>Roll: 220104XXXX</p>
-                <p>Post: Grade C & D</p>
-            </div>
-            <div class="instructions">
-                <h4>Exam Instructions:</h4>
-                <ul>
-                    <li>Type according to your shorthand notes.</li>
-                    <li>Timer starts on your first keypress.</li>
-                    <li>Final evaluation will show full mistakes.</li>
-                </ul>
-            </div>
-        </div>
+    <main class="editor-area">
+        <textarea id="typing-box" spellcheck="false" placeholder="Apna document yahan type karna shuru karein..."></textarea>
+    </main>
 
-        <div class="typing-container">
-            <textarea id="master-text" style="display: none;"></textarea>
-            <textarea id="typing-box" spellcheck="false" placeholder="Start transcribing here..."></textarea>
-        </div>
-    </div>
-
-    <div class="footer">
-        <button id="reset-btn" onclick="location.reload()">Reset Test</button>
-        <button id="final-submit">Submit & Analyze</button>
-    </div>
-
-    <div id="result-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Skill Test Performance Report</h2>
-                <button id="download-pdf" class="btn-save">Save as PDF 📄</button>
-            </div>
-            <div class="res-stats">
-                <div class="stat-card">Total Words<br><b id="res-total">0</b></div>
-                <div class="stat-card">Mistakes<br><b id="res-errors" style="color:#e74c3c">0</b></div>
-                <div class="stat-card">Accuracy<br><b id="res-acc">0%</b></div>
-            </div>
-            <div id="analysis-view" class="analysis-box"></div>
-            <button class="btn-close" onclick="location.reload()">Close & Restart</button>
-        </div>
-    </div>
+    <div id="print-content" style="display: none;"></div>
 
     <script src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>

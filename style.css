@@ -1,63 +1,15 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-body {
-    background-color: #f4f4f9;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.stats-bar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    background: #2c3e50;
-    color: white;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 20px;
-    z-index: 1000;
-}
-
-.logo { font-weight: bold; font-size: 1.5rem; color: #3498db; }
-
-.stat-item { font-size: 1.1rem; }
-
-#reset-btn {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.editor-container {
-    margin-top: 60px;
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
-
-#typing-area {
-    width: 100%;
-    max-width: 900px;
-    height: 100%;
-    border: none;
-    outline: none;
-    font-size: 1.3rem;
-    line-height: 1.8;
-    background: white;
-    padding: 30px;
-    resize: none;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-}
+body { margin: 0; font-family: Arial, sans-serif; height: 100vh; display: flex; flex-direction: column; background: #eee; }
+.exam-header { background: #003366; color: white; padding: 12px 25px; display: flex; justify-content: space-between; border-bottom: 3px solid #f39c12; }
+.main-layout { display: flex; flex: 1; overflow: hidden; padding: 10px; gap: 10px; }
+.sidebar { width: 220px; background: white; border: 1px solid #ccc; padding: 15px; text-align: center; }
+.photo-box { width: 100px; height: 120px; border: 1px solid #aaa; margin: 0 auto 15px; background: #fafafa; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; }
+.typing-container { flex: 1; background: white; border: 1px solid #ccc; }
+#typing-box { width: 100%; height: 100%; padding: 25px; font-family: 'Courier New', monospace; font-size: 18px; line-height: 1.8; border: none; outline: none; resize: none; overflow-y: scroll; }
+.footer { background: #cfcfcf; padding: 10px 25px; text-align: right; border-top: 1px solid #999; }
+#final-submit { background: #28a745; color: white; border: none; padding: 10px 30px; font-weight: bold; cursor: pointer; border-radius: 3px; }
+.modal { display: none; position: fixed; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; }
+.modal-content { background: white; width: 80%; margin: 30px auto; padding: 20px; border-radius: 5px; max-height: 85vh; overflow-y: auto; }
+.res-stats { display: flex; justify-content: space-around; font-size: 18px; margin: 20px 0; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+.analysis-box { padding: 15px; background: #f9f9f9; border: 1px solid #ddd; line-height: 2.5; font-family: monospace; }
+.wrong { color: red; text-decoration: line-through; margin-right: 5px; }
+.correct { color: green; font-weight: bold; margin-right: 10px; }

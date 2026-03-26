@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keylytics | Professional Document Editor</title>
+    <title>Keylytics Pro | High Speed Editor</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="main-header">
-        <div class="brand">Keylytics<span>PRO</span></div>
-        <div class="live-info">
-            <div class="info-box">Time: <b id="timer">00:00</b></div>
-            <div class="info-box">Words: <b id="word-count">0</b></div>
-        </div>
-        <div class="btn-group">
-            <button id="save-pdf-btn" class="btn btn-pdf">Save as PDF 📄</button>
-            <button id="save-txt-btn" class="btn btn-txt">Save as Text 📝</button>
-            <button onclick="location.reload()" class="btn btn-reset">Reset</button>
-        </div>
-    </header>
+    <div class="app-container">
+        <header class="navbar">
+            <div class="brand">Keylytics<span>PRO</span></div>
+            <div class="stats-bar">
+                <div class="stat">Time: <b id="timer">00:00</b></div>
+                <div class="stat">WPM: <b id="wpm">0</b></div>
+                <div class="stat">Words: <b id="word-count">0</b></div>
+            </div>
+            <div class="nav-btns">
+                <button id="save-pdf-btn" class="btn btn-primary">Save PDF</button>
+                <button id="save-txt-btn" class="btn btn-outline">Save Text</button>
+                <button onclick="location.reload()" class="btn btn-danger">Reset</button>
+            </div>
+        </header>
 
-    <main class="editor-area">
-        <textarea id="typing-box" spellcheck="false" placeholder="Apna document yahan type karna shuru karein..."></textarea>
-    </main>
-
-    <div id="print-content" style="display: none;"></div>
+        <main class="editor-main">
+            <textarea id="typing-box" spellcheck="false" placeholder="Type here..."></textarea>
+        </main>
+    </div>
 
     <script src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>

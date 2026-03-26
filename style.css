@@ -1,15 +1,31 @@
-body { margin: 0; font-family: Arial, sans-serif; height: 100vh; display: flex; flex-direction: column; background: #eee; }
-.exam-header { background: #003366; color: white; padding: 12px 25px; display: flex; justify-content: space-between; border-bottom: 3px solid #f39c12; }
-.main-layout { display: flex; flex: 1; overflow: hidden; padding: 10px; gap: 10px; }
-.sidebar { width: 220px; background: white; border: 1px solid #ccc; padding: 15px; text-align: center; }
-.photo-box { width: 100px; height: 120px; border: 1px solid #aaa; margin: 0 auto 15px; background: #fafafa; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; }
-.typing-container { flex: 1; background: white; border: 1px solid #ccc; }
-#typing-box { width: 100%; height: 100%; padding: 25px; font-family: 'Courier New', monospace; font-size: 18px; line-height: 1.8; border: none; outline: none; resize: none; overflow-y: scroll; }
-.footer { background: #cfcfcf; padding: 10px 25px; text-align: right; border-top: 1px solid #999; }
-#final-submit { background: #28a745; color: white; border: none; padding: 10px 30px; font-weight: bold; cursor: pointer; border-radius: 3px; }
-.modal { display: none; position: fixed; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; }
-.modal-content { background: white; width: 80%; margin: 30px auto; padding: 20px; border-radius: 5px; max-height: 85vh; overflow-y: auto; }
-.res-stats { display: flex; justify-content: space-around; font-size: 18px; margin: 20px 0; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-.analysis-box { padding: 15px; background: #f9f9f9; border: 1px solid #ddd; line-height: 2.5; font-family: monospace; }
-.wrong { color: red; text-decoration: line-through; margin-right: 5px; }
-.correct { color: green; font-weight: bold; margin-right: 10px; }
+body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; height: 100vh; display: flex; flex-direction: column; background: #f0f2f5; }
+.exam-header { background: #1a2a6c; color: white; padding: 12px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+.logo-text { font-size: 20px; font-weight: bold; }
+.logo-text span { color: #f39c12; font-size: 12px; border: 1px solid #f39c12; padding: 2px 5px; margin-left: 5px; }
+
+.main-layout { display: flex; flex: 1; overflow: hidden; padding: 15px; gap: 15px; }
+.sidebar { width: 240px; background: white; border-radius: 8px; border: 1px solid #ddd; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.user-card { text-align: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
+.photo { width: 90px; height: 110px; background: #e9ecef; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc; font-size: 10px; color: #666; }
+.instructions { font-size: 12px; color: #555; line-height: 1.6; }
+
+.typing-container { flex: 1; background: white; border-radius: 8px; border: 1px solid #003366; overflow: hidden; }
+#typing-box { width: 100%; height: 100%; padding: 30px; font-family: 'Courier New', monospace; font-size: 19px; line-height: 1.8; border: none; outline: none; resize: none; overflow-y: scroll; }
+
+.footer { background: #fff; padding: 15px 40px; text-align: right; border-top: 1px solid #ddd; }
+#final-submit { background: #27ae60; color: white; border: none; padding: 12px 35px; font-weight: bold; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+#final-submit:hover { background: #219150; }
+#reset-btn { background: #e74c3c; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; margin-right: 10px; }
+
+/* Modal Result */
+.modal { display: none; position: fixed; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; }
+.modal-content { background: white; width: 85%; max-width: 900px; margin: 30px auto; padding: 25px; border-radius: 12px; max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+.res-stats { display: flex; justify-content: space-between; margin: 20px 0; gap: 15px; }
+.stat-card { flex: 1; background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; font-size: 14px; border: 1px solid #eee; }
+.stat-card b { font-size: 24px; display: block; margin-top: 5px; }
+.analysis-box { padding: 20px; background: #fff; border: 1px solid #ddd; line-height: 2.8; font-family: 'Courier New', monospace; border-radius: 5px; }
+.wrong { color: #e74c3c; text-decoration: line-through; background: #ffeaea; padding: 2px; }
+.correct { color: #27ae60; font-weight: bold; border-bottom: 2px solid #27ae60; margin: 0 5px; }
+.btn-save { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+.btn-close { width: 100%; margin-top: 20px; padding: 12px; background: #34495e; color: white; border: none; border-radius: 5px; cursor: pointer; }

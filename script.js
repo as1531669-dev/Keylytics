@@ -1,19 +1,18 @@
-const officialPassage = "The Indian economy is one of the fastest growing economies in the world today. The government has taken several steps to improve the ease of doing business and attract foreign investment. Digital India and Make in India are key initiatives that have transformed the landscape of the country. Infrastructure development is being prioritized to enhance connectivity across states. Education and healthcare remain the primary focus for sustainable growth. Skill development among the youth is essential for the future of the nation.";
-
 let startTime, timerInterval, isStarted = false;
+const typingBox = document.getElementById('typing-box');
 
-window.onload = () => { document.getElementById('master-text').value = officialPassage; };
-
-// Timer starts on first keypress and goes UP
-document.getElementById('typing-box').addEventListener('input', () => {
+// 1. Timer & Word Count Logic
+typingBox.addEventListener('input', () => {
     if (!isStarted) {
         isStarted = true;
         startTime = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
     }
-    // Live WPM calculation
-    let words = document.getElementById('typing-box').value.trim().split(/\s+/).length;
-    document.getElementById('wpm').innerText = words;
+    
+    // Update Word Count
+    let text = typingBox.value.trim();
+    let words = text ? text.split(/\s+/).length : 0;
+    document.getElementById('word-count').innerText = words;
 });
 
 function updateTimer() {
@@ -24,41 +23,33 @@ function updateTimer() {
     document.getElementById('timer').innerText = `${m}:${s}`;
 }
 
-document.getElementById('final-submit').onclick = () => {
-    clearInterval(timerInterval);
-    const original = officialPassage.trim().split(/\s+/);
-    const typed = document.getElementById('typing-box').value.trim().split(/\s+/);
-    
-    let mistakes = 0;
-    let html = "";
+// 2. Save as PDF Functionality
+document.getElementById('save-pdf-btn').onclick = () => {
+    const text = typingBox.value;
+    if (!text) return alert("Pehle kuch type toh kijiye!");
 
-    original.forEach((word, i) => {
-        if (typed[i] === word) {
-            html += `<span>${word} </span>`;
-        } else {
-            mistakes++;
-            html += `<span class="wrong">${word}</span><span class="correct">${typed[i] || "___"}</span> `;
-        }
-    });
+    const element = document.createElement('div');
+    element.innerHTML = `<h2 style="margin-bottom:20px; border-bottom:1px solid #000;">Keylytics Document</h2>
+                         <p style="white-space: pre-wrap; font-family: 'Courier New'; line-height: 1.8;">${text}</p>
+                         <hr style="margin-top:30px;">
+                         <p style="font-size:12px; color:gray;">Time: ${document.getElementById('timer').innerText} | Words: ${document.getElementById('word-count').innerText}</p>`;
 
-    document.getElementById('res-total').innerText = original.length;
-    document.getElementById('res-errors').innerText = mistakes;
-    let acc = ((original.length - mistakes) / original.length * 100).toFixed(2);
-    document.getElementById('res-acc').innerText = (acc < 0 ? 0 : acc) + "%";
-    
-    document.getElementById('analysis-view').innerHTML = html;
-    document.getElementById('result-modal').style.display = "block";
-};
-
-// PDF Download Function
-document.getElementById('download-pdf').onclick = () => {
-    const element = document.querySelector(".modal-content");
     const opt = {
-        margin: 10,
-        filename: 'Keylytics_Result.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
+        margin: 15,
+        filename: 'My_Transcription.pdf',
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).save();
+};
+
+// 3. Save as Text File Functionality
+document.getElementById('save-txt-btn').onclick = () => {
+    const text = typingBox.value;
+    if (!text) return alert("Kuch toh likhiye!");
+
+    const blob = new Blob([text], { type: "text/plain" });
+    const anchor = document.createElement("a");
+    anchor.download = "My_Transcription.txt";
+    anchor.href = window.URL.createObjectURL(blob);
+    anchor.click();
 };

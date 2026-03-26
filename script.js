@@ -1,55 +1,50 @@
 let startTime, timerInterval, isStarted = false;
 const typingBox = document.getElementById('typing-box');
 
-// 1. Timer & Word Count Logic
 typingBox.addEventListener('input', () => {
     if (!isStarted) {
         isStarted = true;
         startTime = Date.now();
-        timerInterval = setInterval(updateTimer, 1000);
+        timerInterval = setInterval(updateStats, 1000);
     }
     
-    // Update Word Count
+    // Live Stats
     let text = typingBox.value.trim();
-    let words = text ? text.split(/\s+/).length : 0;
-    document.getElementById('word-count').innerText = words;
+    let wordsArr = text ? text.split(/\s+/) : [];
+    document.getElementById('word-count').innerText = wordsArr.length;
 });
 
-function updateTimer() {
+function updateStats() {
     let now = Date.now();
-    let diff = Math.floor((now - startTime) / 1000);
-    let m = Math.floor(diff / 60).toString().padStart(2, '0');
-    let s = (diff % 60).toString().padStart(2, '0');
+    let diffInSeconds = Math.floor((now - startTime) / 1000);
+    
+    // Timer
+    let m = Math.floor(diffInSeconds / 60).toString().padStart(2, '0');
+    let s = (diffInSeconds % 60).toString().padStart(2, '0');
     document.getElementById('timer').innerText = `${m}:${s}`;
+    
+    // WPM Logic
+    let words = parseInt(document.getElementById('word-count').innerText);
+    let mins = diffInSeconds / 60;
+    let wpm = Math.round(words / mins) || 0;
+    if (diffInSeconds > 0) document.getElementById('wpm').innerText = wpm;
 }
 
-// 2. Save as PDF Functionality
+// Save PDF
 document.getElementById('save-pdf-btn').onclick = () => {
     const text = typingBox.value;
-    if (!text) return alert("Pehle kuch type toh kijiye!");
-
+    if (!text) return alert("Kuch type karein!");
     const element = document.createElement('div');
-    element.innerHTML = `<h2 style="margin-bottom:20px; border-bottom:1px solid #000;">Keylytics Document</h2>
-                         <p style="white-space: pre-wrap; font-family: 'Courier New'; line-height: 1.8;">${text}</p>
-                         <hr style="margin-top:30px;">
-                         <p style="font-size:12px; color:gray;">Time: ${document.getElementById('timer').innerText} | Words: ${document.getElementById('word-count').innerText}</p>`;
-
-    const opt = {
-        margin: 15,
-        filename: 'My_Transcription.pdf',
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save();
+    element.innerHTML = `<h2 style="margin-bottom:20px;">Keylytics Document</h2><p style="white-space:pre-wrap; font-family:'Courier New'; line-height:1.8;">${text}</p>`;
+    html2pdf().set({ margin: 15, filename: 'Steno_Practice.pdf' }).from(element).save();
 };
 
-// 3. Save as Text File Functionality
+// Save Text
 document.getElementById('save-txt-btn').onclick = () => {
     const text = typingBox.value;
-    if (!text) return alert("Kuch toh likhiye!");
-
     const blob = new Blob([text], { type: "text/plain" });
-    const anchor = document.createElement("a");
-    anchor.download = "My_Transcription.txt";
-    anchor.href = window.URL.createObjectURL(blob);
-    anchor.click();
+    const a = document.createElement("a");
+    a.download = "Steno_Note.txt";
+    a.href = window.URL.createObjectURL(blob);
+    a.click();
 };

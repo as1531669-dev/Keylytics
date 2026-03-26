@@ -3,29 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keylytics Pro | High Speed Editor</title>
+    <title>Keylytics Pro | Steno Editor</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <header class="navbar">
-            <div class="brand">Keylytics<span>PRO</span></div>
-            <div class="stats-bar">
-                <div class="stat">Time: <b id="timer">00:00</b></div>
-                <div class="stat">WPM: <b id="wpm">0</b></div>
-                <div class="stat">Words: <b id="word-count">0</b></div>
-            </div>
-            <div class="nav-btns">
-                <button id="save-pdf-btn" class="btn btn-primary">Save PDF</button>
-                <button id="save-txt-btn" class="btn btn-outline">Save Text</button>
-                <button onclick="location.reload()" class="btn btn-danger">Reset</button>
-            </div>
-        </header>
+    <header class="navbar">
+        <div class="brand">Keylytics<span>PRO</span></div>
+        <div class="stats-container">
+            <div class="stat-box">TIME <b id="timer">00:00</b></div>
+            <div class="stat-box">WPM <b id="wpm">0</b></div>
+            <div class="stat-box">WORDS <b id="word-count">0</b></div>
+        </div>
+        <div class="actions">
+            <button id="save-pdf-btn" class="btn btn-blue">Save PDF</button>
+            <button id="save-txt-btn" class="btn btn-gray">Save Text</button>
+            <button onclick="location.reload()" class="btn btn-red">Reset</button>
+        </div>
+    </header>
 
-        <main class="editor-main">
-            <textarea id="typing-box" spellcheck="false" placeholder="Type here..."></textarea>
-        </main>
-    </div>
+    <main class="editor-wrap">
+        <textarea id="typing-box" spellcheck="false" placeholder="Type your transcription here..."></textarea>
+    </main>
 
     <script src="script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>

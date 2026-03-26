@@ -2,33 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keylytics | Professional Stenography Tool</title>
+    <title>Keylytics | SSC Steno Exam Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <header class="stats-bar">
-        <div class="logo">Keylytics</div>
-        <div class="stat-item">Timer: <span id="timer">00:00</span></div>
-        <div class="stat-item">WPM: <span id="wpm">0</span></div>
-        <div class="stat-item">Chars: <span id="char-count">0</span></div>
-        <div class="controls">
-            <button id="reset-btn">Reset</button>
+    <div class="exam-header">
+        <div class="header-left">Staff Selection Commission - Skill Test Simulation</div>
+        <div class="header-right">Time Remaining: <b id="timer">10:00</b></div>
+    </div>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="photo-box">CANDIDATE PHOTO</div>
+            <p>Name: <b>ANKUSH</b></p>
+            <p>Subject: <b>Stenography (English)</b></p>
+            <hr>
+            <p style="font-size: 11px; color: #666;">Note: Background check enabled. Final evaluation after Submit.</p>
         </div>
-    </header>
-
-    <main class="editor-container">
-        <textarea 
-            id="typing-area" 
-            placeholder="Apna dictation yahan type karna shuru karein..."
-            spellcheck="false"
-            autocomplete="off"
-            autocapitalize="off"
-            autocorrect="off"
-        ></textarea>
-    </main>
-
+        <div class="typing-container">
+            <textarea id="master-text" style="display: none;"></textarea>
+            <textarea id="typing-box" spellcheck="false" placeholder="Start typing your shorthand transcription here..."></textarea>
+        </div>
+    </div>
+    <div class="footer">
+        <button id="final-submit">Final Submit</button>
+    </div>
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <h3>Evaluation Report</h3>
+            <div class="res-stats">
+                <span>Total Words: <b id="res-total">0</b></span>
+                <span>Mistakes: <b id="res-errors" style="color:red">0</b></span>
+                <span>Accuracy: <b id="res-acc">0%</b></span>
+            </div>
+            <div id="analysis-view" class="analysis-box"></div>
+            <button onclick="location.reload()">New Test</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

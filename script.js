@@ -1,7 +1,16 @@
 let startTime, timerInterval, isStarted = false;
+let isPaused = false;
+let totalPausedTime = 0; // Pause ke dauran jo time waste hua use track karne ke liye
+let pauseStartTime = 0;
+
 const typingBox = document.getElementById('typing-box');
+const pauseBtn = document.getElementById("pause-btn");
+const resumeBtn = document.getElementById("resume-btn");
 
 typingBox.addEventListener('input', () => {
+    // Agar game paused hai, toh type nahi karne dena hai
+    if (isPaused) return;
+
     if (!isStarted) {
         isStarted = true;
         startTime = Date.now();
@@ -15,8 +24,11 @@ typingBox.addEventListener('input', () => {
 });
 
 function updateStats() {
+    if (isPaused) return; // Agar pause hai toh stats update mat karo
+
     let now = Date.now();
-    let diffSecs = Math.floor((now - startTime) / 1000);
+    // Pura time me se shuruat ka time aur pause ka time minus kar do
+    let diffSecs = Math.floor((now - startTime - totalPausedTime) / 1000);
     
     // Timer
     let m = Math.floor(diffSecs / 60).toString().padStart(2, '0');
@@ -31,6 +43,33 @@ function updateStats() {
     }
 }
 
+// --- NAYE PAUSE AUR RESUME FUNCTIONS ---
+function pauseTimer() {
+    if (!isStarted || isPaused) return; // Agar test shuru hi nahi hua toh pause kyu karna
+    
+    isPaused = true;
+    pauseStartTime = Date.now(); // Note kar lo kab pause kiya
+    typingBox.disabled = true; // Typing rokne ke liye
+    
+    // Buttons toggle karein
+    if(pauseBtn) pauseBtn.style.display = "none";
+    if(resumeBtn) resumeBtn.style.display = "inline-block";
+}
+
+function resumeTimer() {
+    if (!isPaused) return;
+    
+    isPaused = false;
+    totalPausedTime += (Date.now() - pauseStartTime); // Jitni der pause rha use total me jod do
+    typingBox.disabled = false;
+    typingBox.focus(); // Wapas cursor laane ke liye
+    
+    // Buttons toggle karein
+    if(pauseBtn) pauseBtn.style.display = "inline-block";
+    if(resumeBtn) resumeBtn.style.display = "none";
+}
+
+// --- SAVE BUTTONS LOGIC ---
 document.getElementById('save-pdf-btn').onclick = () => {
     const text = typingBox.value;
     if (!text) return alert("Kuch likho!");

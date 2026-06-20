@@ -54,6 +54,10 @@
             <button onclick="location.reload()" class="btn btn-reset">Reset</button>
         </div>
     </header>
+    <div class="typing-controls" style="text-align: center; margin: 20px 0;">
+        <button id="pause-btn" onclick="pauseTimer()" style="padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #eab308; color: white; border: none; border-radius: 8px; cursor: pointer; margin-right: 10px;">Pause</button>
+        <button id="resume-btn" onclick="resumeTimer()" style="display: none; padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">Resume</button>
+    </div>
 
     <main class="editor-main">
         <textarea id="typing-box" spellcheck="false" placeholder="Transcription yahan shuru karein..."></textarea>

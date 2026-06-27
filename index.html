@@ -54,6 +54,7 @@
             <button onclick="location.reload()" class="btn btn-reset">Reset</button>
         </div>
     </header>
+
     <div class="typing-controls" style="text-align: center; margin: 20px 0;">
         <button id="pause-btn" onclick="pauseTimer()" style="padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #eab308; color: white; border: none; border-radius: 8px; cursor: pointer; margin-right: 10px;">Pause</button>
         <button id="resume-btn" onclick="resumeTimer()" style="display: none; padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">Resume</button>
@@ -66,9 +67,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         let startTime, timerInterval, isStarted = false;
+        let isPaused = false;
+        let totalPausedTime = 0; // Pause ke dauran jo time waste hua use track karne ke liye
+        let pauseStartTime = 0;
+
         const typingBox = document.getElementById('typing-box');
+        const pauseBtn = document.getElementById("pause-btn");
+        const resumeBtn = document.getElementById("resume-btn");
 
         typingBox.addEventListener('input', () => {
+            // Agar test paused hai, toh kuch type nahi karne dena
+            if (isPaused) return;
+
             if (!isStarted) {
                 isStarted = true;
                 startTime = Date.now();
@@ -80,7 +90,12 @@
         });
 
         function updateStats() {
-            let diffSecs = Math.floor((Date.now() - startTime) / 1000);
+            if (isPaused) return; // Pause hone par clock rok do
+
+            let now = Date.now();
+            // Shuruat ke samay aur total pause duration dono ko minus karenge accurate result ke liye
+            let diffSecs = Math.floor((now - startTime - totalPausedTime) / 1000);
+            
             let m = Math.floor(diffSecs / 60).toString().padStart(2, '0');
             let s = (diffSecs % 60).toString().padStart(2, '0');
             document.getElementById('timer').innerText = `${m}:${s}`;
@@ -90,6 +105,31 @@
                 let wpm = Math.round(wordCount / (diffSecs / 60));
                 document.getElementById('wpm').innerText = wpm || 0;
             }
+        }
+
+        // --- PAUSE FUNCTION ---
+        function pauseTimer() {
+            if (!isStarted || isPaused) return; // Jab tak typing shuru na ho pause kaam nahi karega
+            
+            isPaused = true;
+            pauseStartTime = Date.now(); // Note kiya kab pause hua
+            typingBox.disabled = true; // Box lock kiya
+            
+            if(pauseBtn) pauseBtn.style.display = "none";
+            if(resumeBtn) resumeBtn.style.display = "inline-block";
+        }
+
+        // --- RESUME FUNCTION ---
+        function resumeTimer() {
+            if (!isPaused) return;
+            
+            isPaused = false;
+            totalPausedTime += (Date.now() - pauseStartTime); // Pause duration calculate ki
+            typingBox.disabled = false; // Box unlock kiya
+            typingBox.focus(); // Auto focus on textarea
+            
+            if(pauseBtn) pauseBtn.style.display = "inline-block";
+            if(resumeBtn) resumeBtn.style.display = "none";
         }
 
         document.getElementById('save-pdf-btn').onclick = () => {

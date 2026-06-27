@@ -43,9 +43,9 @@ function updateStats() {
     }
 }
 
-// --- NAYE PAUSE AUR RESUME FUNCTIONS ---
+// --- PAUSE AUR RESUME FUNCTIONS ---
 function pauseTimer() {
-    if (!isStarted || isPaused) return; // Agar test shuru hi nahi hua toh pause kyu karna
+    if (!isStarted || isPaused) return; // Agar test shuru hi nahi hua toh pause nahi hoga
     
     isPaused = true;
     pauseStartTime = Date.now(); // Note kar lo kab pause kiya

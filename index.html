@@ -62,7 +62,7 @@
     </div>
 
     <main class="editor-main">
-        <textarea id="typing-box" spellcheck="false" placeholder="Transcription yahan shuru karein..."></textarea>
+        <textarea id="typing-box" spellcheck="false" placeholder="Start typing your transcription here..."></textarea>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -89,7 +89,7 @@
             let words = text ? text.split(/\s+/).length : 0;
             document.getElementById('word-count').innerText = words;
 
-            // ✨ AUTO SCROLL: Page fill hone par automatic neeche scroll hoga
+            // AUTO SCROLL
             typingBox.scrollTop = typingBox.scrollHeight;
         });
 

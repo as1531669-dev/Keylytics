@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keylytics PRO | Steno Skill Test</title>
     <style>
-        /* Modern CSS - Isse interface chamak jayega */
+        /* Modern CSS - Sleek and clean UI */
         :root { --primary: #2563eb; --dark: #0f172a; --bg: #f8fafc; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -55,6 +55,7 @@
         </div>
     </header>
 
+    <!-- Controls Container (Pause & Resume) -->
     <div class="typing-controls" style="text-align: center; margin: 20px 0;">
         <button id="pause-btn" onclick="pauseTimer()" style="padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #eab308; color: white; border: none; border-radius: 8px; cursor: pointer; margin-right: 10px;">Pause</button>
         <button id="resume-btn" onclick="resumeTimer()" style="display: none; padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">Resume</button>
@@ -68,7 +69,7 @@
     <script>
         let startTime, timerInterval, isStarted = false;
         let isPaused = false;
-        let totalPausedTime = 0; // Pause ke dauran jo time waste hua use track karne ke liye
+        let totalPausedTime = 0;
         let pauseStartTime = 0;
 
         const typingBox = document.getElementById('typing-box');
@@ -76,7 +77,6 @@
         const resumeBtn = document.getElementById("resume-btn");
 
         typingBox.addEventListener('input', () => {
-            // Agar test paused hai, toh kuch type nahi karne dena
             if (isPaused) return;
 
             if (!isStarted) {
@@ -84,16 +84,19 @@
                 startTime = Date.now();
                 timerInterval = setInterval(updateStats, 1000);
             }
+            
             let text = typingBox.value.trim();
             let words = text ? text.split(/\s+/).length : 0;
             document.getElementById('word-count').innerText = words;
+
+            // ✨ AUTO SCROLL: Page fill hone par automatic neeche scroll hoga
+            typingBox.scrollTop = typingBox.scrollHeight;
         });
 
         function updateStats() {
-            if (isPaused) return; // Pause hone par clock rok do
+            if (isPaused) return;
 
             let now = Date.now();
-            // Shuruat ke samay aur total pause duration dono ko minus karenge accurate result ke liye
             let diffSecs = Math.floor((now - startTime - totalPausedTime) / 1000);
             
             let m = Math.floor(diffSecs / 60).toString().padStart(2, '0');
@@ -107,40 +110,45 @@
             }
         }
 
-        // --- PAUSE FUNCTION ---
+        // Pause Logic
         function pauseTimer() {
-            if (!isStarted || isPaused) return; // Jab tak typing shuru na ho pause kaam nahi karega
+            if (!isStarted || isPaused) return;
             
             isPaused = true;
-            pauseStartTime = Date.now(); // Note kiya kab pause hua
-            typingBox.disabled = true; // Box lock kiya
+            pauseStartTime = Date.now();
+            typingBox.disabled = true;
             
             if(pauseBtn) pauseBtn.style.display = "none";
             if(resumeBtn) resumeBtn.style.display = "inline-block";
         }
 
-        // --- RESUME FUNCTION ---
+        // Resume Logic
         function resumeTimer() {
             if (!isPaused) return;
             
             isPaused = false;
-            totalPausedTime += (Date.now() - pauseStartTime); // Pause duration calculate ki
-            typingBox.disabled = false; // Box unlock kiya
-            typingBox.focus(); // Auto focus on textarea
+            totalPausedTime += (Date.now() - pauseStartTime);
+            typingBox.disabled = false;
+            typingBox.focus();
             
             if(pauseBtn) pauseBtn.style.display = "inline-block";
             if(resumeBtn) resumeBtn.style.display = "none";
         }
 
+        // Save PDF Logic
         document.getElementById('save-pdf-btn').onclick = () => {
             const el = document.createElement('div');
             el.innerHTML = `<h1 style="color:#2563eb; font-family:sans-serif;">Steno Transcription</h1><p style="white-space:pre-wrap; font-family:monospace; font-size:18px; line-height:1.6; margin-top:20px;">${typingBox.value}</p>`;
             html2pdf().set({ margin: 20, filename: 'Keylytics_Steno.pdf' }).from(el).save();
         };
 
+        // Save TXT Logic
         document.getElementById('save-txt-btn').onclick = () => {
             const blob = new Blob([typingBox.value], { type: "text/plain" });
-            const a = document.createElement("a"); a.download = "note.txt"; a.href = URL.createObjectURL(blob); a.click();
+            const a = document.createElement("a");
+            a.download = "note.txt"; 
+            a.href = URL.createObjectURL(blob); 
+            a.click();
         };
     </script>
 </body>

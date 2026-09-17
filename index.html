@@ -1,155 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keylytics PRO | Steno Skill Test</title>
-    <style>
-        /* Modern CSS - Sleek and clean UI */
-        :root { --primary: #2563eb; --dark: #0f172a; --bg: #f8fafc; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        .navbar { 
-            background: white; padding: 15px 40px; 
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); z-index: 100;
-        }
-        .brand { font-size: 26px; font-weight: 800; color: var(--dark); letter-spacing: -1px; }
-        .brand span { color: var(--primary); font-size: 10px; margin-left: 5px; border: 1.5px solid var(--primary); padding: 2px 5px; border-radius: 4px; vertical-align: middle; }
-
-        .stats-wrap { display: flex; gap: 40px; background: #f1f5f9; padding: 10px 30px; border-radius: 50px; }
-        .stat-box { text-align: center; font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 1px; }
-        .stat-box b { display: block; font-size: 22px; color: var(--dark); font-family: 'Courier New', monospace; }
-
-        .actions { display: flex; gap: 12px; }
-        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .btn-save { background: var(--primary); color: white; }
-        .btn-text { background: white; color: var(--dark); border: 1px solid #e2e8f0; }
-        .btn-reset { background: #fee2e2; color: #dc2626; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
-
-        .editor-main { flex: 1; padding: 30px; display: flex; justify-content: center; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); }
-        #typing-box { 
-            width: 100%; max-width: 1100px; background: white; 
-            border: 1px solid #e2e8f0; border-radius: 20px; padding: 45px; 
-            font-family: 'Courier New', Courier, monospace; font-size: 24px; 
-            line-height: 1.8; color: #1e293b; outline: none; resize: none; 
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); transition: 0.3s;
-        }
-        #typing-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keylytics - SSC Steno Passage Checker</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
+    
+    .section { margin-bottom: 20px; }
+    label { font-weight: bold; display: block; margin-bottom: 8px; }
+    textarea { width: 100%; height: 140px; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; resize: vertical; }
+    
+    .btn { padding: 12px 24px; font-size: 16px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+    .btn-primary { background: #007bff; color: white; }
+    .btn-primary:hover { background: #0056b3; }
+    .btn-success { background: #28a745; color: white; }
+    .btn-success:hover { background: #218838; }
+    
+    .stats-bar { display: flex; justify-content: space-between; background: #e9ecef; padding: 15px; border-radius: 6px; margin-bottom: 15px; font-size: 18px; font-weight: bold; }
+    
+    .result-card { background: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; margin-top: 20px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+    .stat-box { background: #fff; padding: 12px; border-radius: 6px; border-left: 4px solid #007bff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    
+    .diff-container { background: #fff; border: 1px solid #ccc; padding: 15px; border-radius: 6px; max-height: 250px; overflow-y: auto; line-height: 1.8; font-size: 16px; white-space: pre-wrap; }
+    
+    /* Highlight Classes */
+    .correct { color: #28a745; }
+    .full-mistake { background-color: #ffd2d2; color: #d9534f; font-weight: bold; padding: 2px 4px; border-radius: 3px; text-decoration: line-through; }
+    .half-mistake { background-color: #fff3cd; color: #856404; font-weight: bold; padding: 2px 4px; border-radius: 3px; }
+    .missing-word { background-color: #e2e3e5; color: #383d41; font-style: italic; padding: 2px 4px; border-radius: 3px; }
+    
+    .badge-pass { background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 4px; }
+    .badge-fail { background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 4px; }
+  </style>
 </head>
 <body>
-    <header class="navbar">
-        <div class="brand">Keylytics<span>PRO</span></div>
-        <div class="stats-wrap">
-            <div class="stat-box">TIME <b id="timer">00:00</b></div>
-            <div class="stat-box">WPM <b id="wpm">0</b></div>
-            <div class="stat-box">WORDS <b id="word-count">0</b></div>
-        </div>
-        <div class="actions">
-            <button id="save-pdf-btn" class="btn btn-save">Save PDF</button>
-            <button id="save-txt-btn" class="btn btn-text">Save Text</button>
-            <button onclick="location.reload()" class="btn btn-reset">Reset</button>
-        </div>
-    </header>
 
-    <!-- Controls Container (Pause & Resume) -->
-    <div class="typing-controls" style="text-align: center; margin: 20px 0;">
-        <button id="pause-btn" onclick="pauseTimer()" style="padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #eab308; color: white; border: none; border-radius: 8px; cursor: pointer; margin-right: 10px;">Pause</button>
-        <button id="resume-btn" onclick="resumeTimer()" style="display: none; padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">Resume</button>
+<div class="container">
+  <h1>Keylytics - SSC Steno Passage Evaluator</h1>
+
+  <!-- Step 1: Input Original Passage -->
+  <div id="setupSection" class="section">
+    <label for="masterPassage">Paste Original Passage Here:</label>
+    <textarea id="masterPassage" placeholder="Enter original text/passage to practice..."></textarea>
+    <button class="btn btn-primary" onclick="startTest()">Start Practice Test</button>
+  </div>
+
+  <!-- Step 2: Typing Area -->
+  <div id="typingSection" class="section" style="display: none;">
+    <div class="stats-bar">
+      <div>Time: <span id="timer">00:00</span></div>
+      <div>Typed Words: <span id="liveWordCount">0</span></div>
+      <div>Live WPM: <span id="liveWpm">0</span></div>
     </div>
 
-    <main class="editor-main">
-        <textarea id="typing-box" spellcheck="false" placeholder="Start typing your transcription here..."></textarea>
-    </main>
+    <label for="userTypingArea">Type Your Transcription Below:</label>
+    <textarea id="userTypingArea" placeholder="Start typing here..." oninput="onTypingInput()"></textarea>
+    <br><br>
+    <button class="btn btn-success" onclick="finishTest()">Submit & Check Result</button>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script>
-        let startTime, timerInterval, isStarted = false;
-        let isPaused = false;
-        let totalPausedTime = 0;
-        let pauseStartTime = 0;
+  <!-- Step 3: Detailed SSC Result -->
+  <div id="resultSection" class="section" style="display: none;">
+    <h2>Evaluation Report</h2>
+    
+    <div class="result-card">
+      <div class="grid-2">
+        <div class="stat-box"><strong>Total Master Words:</strong> <span id="resTotalWords">0</span></div>
+        <div class="stat-box"><strong>Time Taken:</strong> <span id="resTimeTaken">0s</span></div>
+        <div class="stat-box"><strong>Gross Speed:</strong> <span id="resGrossWpm">0</span> WPM</div>
+        <div class="stat-box"><strong>Accuracy:</strong> <span id="resAccuracy">0%</span></div>
+        <div class="stat-box"><strong>Full Mistakes:</strong> <span id="resFullMistakes" style="color:red;">0</span></div>
+        <div class="stat-box"><strong>Half Mistakes:</strong> <span id="resHalfMistakes" style="color:orange;">0</span></div>
+        <div class="stat-box"><strong>Total SSC Mistakes:</strong> <span id="resTotalMistakes">0</span></div>
+        <div class="stat-box"><strong>Error Percentage:</strong> <span id="resErrorPercent">0%</span></div>
+      </div>
 
-        const typingBox = document.getElementById('typing-box');
-        const pauseBtn = document.getElementById("pause-btn");
-        const resumeBtn = document.getElementById("resume-btn");
+      <div style="margin-top: 15px; font-size: 16px;">
+        <p><strong>Grade C Status (Max 5% Error):</strong> <span id="statusGradeC"></span></p>
+        <p><strong>Grade D Status (Max 7% Error):</strong> <span id="statusGradeD"></span></p>
+      </div>
+    </div>
 
-        typingBox.addEventListener('input', () => {
-            if (isPaused) return;
+    <h3>Detailed Comparison (Mistakes Breakdown)</h3>
+    <p><small><b>Legend:</b> <span class="correct">Green = Correct</span> | <span class="full-mistake">Red = Full Mistake</span> | <span class="half-mistake">Yellow = Half Mistake</span> | <span class="missing-word">Gray = Omitted Word</span></small></p>
+    <div id="diffContainer" class="diff-container"></div>
+    
+    <br>
+    <button class="btn btn-primary" onclick="resetTest()">Try Another Passage</button>
+  </div>
+</div>
 
-            if (!isStarted) {
-                isStarted = true;
-                startTime = Date.now();
-                timerInterval = setInterval(updateStats, 1000);
-            }
-            
-            let text = typingBox.value.trim();
-            let words = text ? text.split(/\s+/).length : 0;
-            document.getElementById('word-count').innerText = words;
-
-            // AUTO SCROLL
-            typingBox.scrollTop = typingBox.scrollHeight;
-        });
-
-        function updateStats() {
-            if (isPaused) return;
-
-            let now = Date.now();
-            let diffSecs = Math.floor((now - startTime - totalPausedTime) / 1000);
-            
-            let m = Math.floor(diffSecs / 60).toString().padStart(2, '0');
-            let s = (diffSecs % 60).toString().padStart(2, '0');
-            document.getElementById('timer').innerText = `${m}:${s}`;
-            
-            let wordCount = parseInt(document.getElementById('word-count').innerText);
-            if (diffSecs > 1) {
-                let wpm = Math.round(wordCount / (diffSecs / 60));
-                document.getElementById('wpm').innerText = wpm || 0;
-            }
-        }
-
-        // Pause Logic
-        function pauseTimer() {
-            if (!isStarted || isPaused) return;
-            
-            isPaused = true;
-            pauseStartTime = Date.now();
-            typingBox.disabled = true;
-            
-            if(pauseBtn) pauseBtn.style.display = "none";
-            if(resumeBtn) resumeBtn.style.display = "inline-block";
-        }
-
-        // Resume Logic
-        function resumeTimer() {
-            if (!isPaused) return;
-            
-            isPaused = false;
-            totalPausedTime += (Date.now() - pauseStartTime);
-            typingBox.disabled = false;
-            typingBox.focus();
-            
-            if(pauseBtn) pauseBtn.style.display = "inline-block";
-            if(resumeBtn) resumeBtn.style.display = "none";
-        }
-
-        // Save PDF Logic
-        document.getElementById('save-pdf-btn').onclick = () => {
-            const el = document.createElement('div');
-            el.innerHTML = `<h1 style="color:#2563eb; font-family:sans-serif;">Steno Transcription</h1><p style="white-space:pre-wrap; font-family:monospace; font-size:18px; line-height:1.6; margin-top:20px;">${typingBox.value}</p>`;
-            html2pdf().set({ margin: 20, filename: 'Keylytics_Steno.pdf' }).from(el).save();
-        };
-
-        // Save TXT Logic
-        document.getElementById('save-txt-btn').onclick = () => {
-            const blob = new Blob([typingBox.value], { type: "text/plain" });
-            const a = document.createElement("a");
-            a.download = "note.txt"; 
-            a.href = URL.createObjectURL(blob); 
-            a.click();
-        };
-    </script>
+<script src="app.js"></script>
 </body>
 </html>

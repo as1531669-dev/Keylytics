@@ -1,85 +1,145 @@
-let startTime, timerInterval, isStarted = false;
-let isPaused = false;
-let totalPausedTime = 0; // Pause ke dauran jo time waste hua use track karne ke liye
-let pauseStartTime = 0;
+let masterText = "";
+let timerInterval = null;
+let secondsElapsed = 0;
+let testStarted = false;
 
-const typingBox = document.getElementById('typing-box');
-const pauseBtn = document.getElementById("pause-btn");
-const resumeBtn = document.getElementById("resume-btn");
+function startTest() {
+  masterText = document.getElementById("masterPassage").value.trim();
+  if (!masterText) {
+    alert("Kripya pehle passage paste karein!");
+    return;
+  }
 
-typingBox.addEventListener('input', () => {
-    // Agar game paused hai, toh type nahi karne dena hai
-    if (isPaused) return;
+  document.getElementById("setupSection").style.display = "none";
+  document.getElementById("typingSection").style.display = "block";
+  document.getElementById("userTypingArea").value = "";
+  document.getElementById("userTypingArea").focus();
 
-    if (!isStarted) {
-        isStarted = true;
-        startTime = Date.now();
-        timerInterval = setInterval(updateStats, 1000);
+  secondsElapsed = 0;
+  testStarted = false;
+  document.getElementById("timer").innerText = "00:00";
+  document.getElementById("liveWordCount").innerText = "0";
+  document.getElementById("liveWpm").innerText = "0";
+}
+
+function onTypingInput() {
+  if (!testStarted) {
+    testStarted = true;
+    startTimer();
+  }
+
+  let typed = document.getElementById("userTypingArea").value;
+  let wordCount = typed.trim() ? typed.trim().split(/\s+/).length : 0;
+  document.getElementById("liveWordCount").innerText = wordCount;
+
+  // Live WPM calculation
+  let minutes = secondsElapsed / 60;
+  if (minutes > 0) {
+    let wpm = Math.round(wordCount / minutes);
+    document.getElementById("liveWpm").innerText = wpm;
+  }
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsElapsed++;
+    let mins = Math.floor(secondsElapsed / 60);
+    let secs = secondsElapsed % 60;
+    document.getElementById("timer").innerText = 
+      `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    
+    let typed = document.getElementById("userTypingArea").value;
+    let wordCount = typed.trim() ? typed.trim().split(/\s+/).length : 0;
+    let minutes = secondsElapsed / 60;
+    if (minutes > 0) {
+      document.getElementById("liveWpm").innerText = Math.round(wordCount / minutes);
     }
-    
-    // Live Word Count
-    let text = typingBox.value.trim();
-    let words = text ? text.split(/\s+/).length : 0;
-    document.getElementById('word-count').innerText = words;
-});
+  }, 1000);
+}
 
-function updateStats() {
-    if (isPaused) return; // Agar pause hai toh stats update mat karo
+function finishTest() {
+  clearInterval(timerInterval);
+  let typedText = document.getElementById("userTypingArea").value.trim();
 
-    let now = Date.now();
-    // Pura time me se shuruat ka time aur pause ka time minus kar do
-    let diffSecs = Math.floor((now - startTime - totalPausedTime) / 1000);
-    
-    // Timer
-    let m = Math.floor(diffSecs / 60).toString().padStart(2, '0');
-    let s = (diffSecs % 60).toString().padStart(2, '0');
-    document.getElementById('timer').innerText = `${m}:${s}`;
-    
-    // Accurate WPM
-    let wordCount = parseInt(document.getElementById('word-count').innerText);
-    if (diffSecs > 1) {
-        let wpm = Math.round(wordCount / (diffSecs / 60));
-        document.getElementById('wpm').innerText = wpm || 0;
+  document.getElementById("typingSection").style.display = "none";
+  document.getElementById("resultSection").style.display = "block";
+
+  evaluateSSC(masterText, typedText);
+}
+
+function evaluateSSC(original, typed) {
+  const masterWords = original.split(/\s+/);
+  const typedWords = typed ? typed.split(/\s+/) : [];
+
+  let fullMistakes = 0;
+  let halfMistakes = 0;
+  let diffHTML = [];
+
+  const maxLen = Math.max(masterWords.length, typedWords.length);
+
+  for (let i = 0; i < maxLen; i++) {
+    let origWord = masterWords[i] || "";
+    let typedWord = typedWords[i] || "";
+
+    // Normalize words for comparison (remove punctuation and lower case)
+    let origClean = origWord.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase();
+    let typedClean = typedWord.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase();
+
+    if (!typedWord) {
+      // Omission Error (Full Mistake)
+      fullMistakes++;
+      diffHTML.push(`<span class="missing-word" title="Missing Word">[Om: ${origWord}]</span>`);
+    } else if (!origWord) {
+      // Extra Word (Full Mistake)
+      fullMistakes++;
+      diffHTML.push(`<span class="full-mistake" title="Extra Word">[Ex: ${typedWord}]</span>`);
+    } else if (origClean !== typedClean) {
+      // Wrong Word / Substitution (Full Mistake)
+      fullMistakes++;
+      diffHTML.push(`<span class="full-mistake" title="Expected: ${origWord}">${typedWord}</span>`);
+    } else if (origWord !== typedWord) {
+      // Spelling Case / Capitalization Error (Half Mistake)
+      halfMistakes++;
+      diffHTML.push(`<span class="half-mistake" title="Expected: ${origWord}">${typedWord}</span>`);
+    } else {
+      // Correct Match
+      diffHTML.push(`<span class="correct">${typedWord}</span>`);
     }
+  }
+
+  // Formulas
+  let totalMistakes = fullMistakes + (halfMistakes / 2);
+  let errorPercentage = masterWords.length > 0 ? ((totalMistakes / masterWords.length) * 100).toFixed(2) : 0;
+  let accuracy = Math.max(0, (100 - errorPercentage)).toFixed(2);
+
+  let minutes = secondsElapsed / 60;
+  let grossWpm = minutes > 0 ? Math.round(typedWords.length / minutes) : 0;
+
+  // Render Stats
+  document.getElementById("resTotalWords").innerText = masterWords.length;
+  document.getElementById("resTimeTaken").innerText = `${secondsElapsed}s`;
+  document.getElementById("resGrossWpm").innerText = grossWpm;
+  document.getElementById("resAccuracy").innerText = `${accuracy}%`;
+  document.getElementById("resFullMistakes").innerText = fullMistakes;
+  document.getElementById("resHalfMistakes").innerText = halfMistakes;
+  document.getElementById("resTotalMistakes").innerText = totalMistakes;
+  document.getElementById("resErrorPercent").innerText = `${errorPercentage}%`;
+
+  // Status Badges
+  document.getElementById("statusGradeC").innerHTML = errorPercentage <= 5 
+    ? `<span class="badge-pass">QUALIFIED (Errors &le; 5%)</span>` 
+    : `<span class="badge-fail">NOT QUALIFIED (Errors > 5%)</span>`;
+
+  document.getElementById("statusGradeD").innerHTML = errorPercentage <= 7 
+    ? `<span class="badge-pass">QUALIFIED (Errors &le; 7%)</span>` 
+    : `<span class="badge-fail">NOT QUALIFIED (Errors > 7%)</span>`;
+
+  // Render Diff Output
+  document.getElementById("diffContainer").innerHTML = diffHTML.join(" ");
 }
 
-// --- PAUSE AUR RESUME FUNCTIONS ---
-function pauseTimer() {
-    if (!isStarted || isPaused) return; // Agar test shuru hi nahi hua toh pause nahi hoga
-    
-    isPaused = true;
-    pauseStartTime = Date.now(); // Note kar lo kab pause kiya
-    typingBox.disabled = true; // Typing rokne ke liye
-    
-    // Buttons toggle karein
-    if(pauseBtn) pauseBtn.style.display = "none";
-    if(resumeBtn) resumeBtn.style.display = "inline-block";
+function resetTest() {
+  document.getElementById("resultSection").style.display = "none";
+  document.getElementById("setupSection").style.display = "block";
+  document.getElementById("masterPassage").value = "";
 }
-
-function resumeTimer() {
-    if (!isPaused) return;
-    
-    isPaused = false;
-    totalPausedTime += (Date.now() - pauseStartTime); // Jitni der pause rha use total me jod do
-    typingBox.disabled = false;
-    typingBox.focus(); // Wapas cursor laane ke liye
-    
-    // Buttons toggle karein
-    if(pauseBtn) pauseBtn.style.display = "inline-block";
-    if(resumeBtn) resumeBtn.style.display = "none";
-}
-
-// --- SAVE BUTTONS LOGIC ---
-document.getElementById('save-pdf-btn').onclick = () => {
-    const text = typingBox.value;
-    if (!text) return alert("Kuch likho!");
-    const el = document.createElement('div');
-    el.innerHTML = `<h2 style="color:#2563eb;">Keylytics Note</h2><p style="white-space:pre-wrap; font-family:monospace;">${text}</p>`;
-    html2pdf().set({ margin: 20, filename: 'note.pdf' }).from(el).save();
-};
-
-document.getElementById('save-txt-btn').onclick = () => {
-    const blob = new Blob([typingBox.value], { type: "text/plain" });
-    const a = document.createElement("a");
-    a.download = "note.txt"; a.href = URL.createObjectURL(blob); a.click();
-};

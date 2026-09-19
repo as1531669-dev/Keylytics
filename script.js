@@ -1,145 +1,114 @@
-let masterText = "";
-let timerInterval = null;
-let secondsElapsed = 0;
-let testStarted = false;
+// Keylytics - Original Core Script
 
-function startTest() {
-  masterText = document.getElementById("masterPassage").value.trim();
-  if (!masterText) {
-    alert("Kripya pehle passage paste karein!");
-    return;
-  }
+const samplePassage = "Practice makes a person perfect. Typing regularly with proper accuracy and speed helps in mastering stenography and computer speed examinations. Keylytics provides real-time feedback on your performance.";
 
-  document.getElementById("setupSection").style.display = "none";
-  document.getElementById("typingSection").style.display = "block";
-  document.getElementById("userTypingArea").value = "";
-  document.getElementById("userTypingArea").focus();
+let timeLimit = 60;
+let timeLeft = timeLimit;
+let timer = null;
+let isTestStarted = false;
+let totalTypedChars = 0;
+let correctTypedChars = 0;
 
-  secondsElapsed = 0;
-  testStarted = false;
-  document.getElementById("timer").innerText = "00:00";
-  document.getElementById("liveWordCount").innerText = "0";
-  document.getElementById("liveWpm").innerText = "0";
+const textDisplay = document.getElementById("textDisplay");
+const typingInput = document.getElementById("typingInput");
+const timerDisplay = document.getElementById("timer");
+const wpmDisplay = document.getElementById("wpm");
+const accuracyDisplay = document.getElementById("accuracy");
+
+// Passage Render Function
+function initTest() {
+  textDisplay.innerHTML = "";
+  samplePassage.split("").forEach((char, index) => {
+    const span = document.createElement("span");
+    span.innerText = char;
+    if (index === 0) span.classList.add("current");
+    textDisplay.appendChild(span);
+  });
 }
 
-function onTypingInput() {
-  if (!testStarted) {
-    testStarted = true;
+// Typing Event Listener
+typingInput.addEventListener("input", () => {
+  if (!isTestStarted) {
+    isTestStarted = true;
     startTimer();
   }
 
-  let typed = document.getElementById("userTypingArea").value;
-  let wordCount = typed.trim() ? typed.trim().split(/\s+/).length : 0;
-  document.getElementById("liveWordCount").innerText = wordCount;
+  const arrayQuote = textDisplay.querySelectorAll("span");
+  const arrayValue = typingInput.value.split("");
 
-  // Live WPM calculation
-  let minutes = secondsElapsed / 60;
-  if (minutes > 0) {
-    let wpm = Math.round(wordCount / minutes);
-    document.getElementById("liveWpm").innerText = wpm;
+  correctTypedChars = 0;
+  totalTypedChars = arrayValue.length;
+
+  arrayQuote.forEach((characterSpan, index) => {
+    const character = arrayValue[index];
+
+    characterSpan.classList.remove("current");
+
+    if (character == null) {
+      characterSpan.classList.remove("correct", "incorrect");
+    } else if (character === characterSpan.innerText) {
+      characterSpan.classList.add("correct");
+      characterSpan.classList.remove("incorrect");
+      correctTypedChars++;
+    } else {
+      characterSpan.classList.add("incorrect");
+      characterSpan.classList.remove("correct");
+    }
+  });
+
+  if (arrayValue.length < arrayQuote.length) {
+    arrayQuote[arrayValue.length].classList.add("current");
   }
-}
 
+  // Calculate Metrics on Every Keystroke
+  calculateMetrics();
+});
+
+// Timer Logic
 function startTimer() {
-  timerInterval = setInterval(() => {
-    secondsElapsed++;
-    let mins = Math.floor(secondsElapsed / 60);
-    let secs = secondsElapsed % 60;
-    document.getElementById("timer").innerText = 
-      `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    
-    let typed = document.getElementById("userTypingArea").value;
-    let wordCount = typed.trim() ? typed.trim().split(/\s+/).length : 0;
-    let minutes = secondsElapsed / 60;
-    if (minutes > 0) {
-      document.getElementById("liveWpm").innerText = Math.round(wordCount / minutes);
+  timer = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--;
+      timerDisplay.innerText = `${timeLeft}s`;
+      calculateMetrics();
+    } else {
+      clearInterval(timer);
+      typingInput.disabled = true;
     }
   }, 1000);
 }
 
-function finishTest() {
-  clearInterval(timerInterval);
-  let typedText = document.getElementById("userTypingArea").value.trim();
+// Live WPM & Accuracy Calculation
+function calculateMetrics() {
+  let timeSpent = timeLimit - timeLeft;
+  if (timeSpent <= 0) timeSpent = 1;
 
-  document.getElementById("typingSection").style.display = "none";
-  document.getElementById("resultSection").style.display = "block";
+  // Standard Formula: 5 Characters = 1 Word
+  let wpm = Math.round((correctTypedChars / 5) / (timeSpent / 60));
+  wpmDisplay.innerText = wpm >= 0 && !isNaN(wpm) ? wpm : 0;
 
-  evaluateSSC(masterText, typedText);
+  // Accuracy Percentage
+  let accuracy = totalTypedChars > 0 ? Math.round((correctTypedChars / totalTypedChars) * 100) : 100;
+  accuracyDisplay.innerText = `${accuracy}%`;
 }
 
-function evaluateSSC(original, typed) {
-  const masterWords = original.split(/\s+/);
-  const typedWords = typed ? typed.split(/\s+/) : [];
-
-  let fullMistakes = 0;
-  let halfMistakes = 0;
-  let diffHTML = [];
-
-  const maxLen = Math.max(masterWords.length, typedWords.length);
-
-  for (let i = 0; i < maxLen; i++) {
-    let origWord = masterWords[i] || "";
-    let typedWord = typedWords[i] || "";
-
-    // Normalize words for comparison (remove punctuation and lower case)
-    let origClean = origWord.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase();
-    let typedClean = typedWord.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").toLowerCase();
-
-    if (!typedWord) {
-      // Omission Error (Full Mistake)
-      fullMistakes++;
-      diffHTML.push(`<span class="missing-word" title="Missing Word">[Om: ${origWord}]</span>`);
-    } else if (!origWord) {
-      // Extra Word (Full Mistake)
-      fullMistakes++;
-      diffHTML.push(`<span class="full-mistake" title="Extra Word">[Ex: ${typedWord}]</span>`);
-    } else if (origClean !== typedClean) {
-      // Wrong Word / Substitution (Full Mistake)
-      fullMistakes++;
-      diffHTML.push(`<span class="full-mistake" title="Expected: ${origWord}">${typedWord}</span>`);
-    } else if (origWord !== typedWord) {
-      // Spelling Case / Capitalization Error (Half Mistake)
-      halfMistakes++;
-      diffHTML.push(`<span class="half-mistake" title="Expected: ${origWord}">${typedWord}</span>`);
-    } else {
-      // Correct Match
-      diffHTML.push(`<span class="correct">${typedWord}</span>`);
-    }
-  }
-
-  // Formulas
-  let totalMistakes = fullMistakes + (halfMistakes / 2);
-  let errorPercentage = masterWords.length > 0 ? ((totalMistakes / masterWords.length) * 100).toFixed(2) : 0;
-  let accuracy = Math.max(0, (100 - errorPercentage)).toFixed(2);
-
-  let minutes = secondsElapsed / 60;
-  let grossWpm = minutes > 0 ? Math.round(typedWords.length / minutes) : 0;
-
-  // Render Stats
-  document.getElementById("resTotalWords").innerText = masterWords.length;
-  document.getElementById("resTimeTaken").innerText = `${secondsElapsed}s`;
-  document.getElementById("resGrossWpm").innerText = grossWpm;
-  document.getElementById("resAccuracy").innerText = `${accuracy}%`;
-  document.getElementById("resFullMistakes").innerText = fullMistakes;
-  document.getElementById("resHalfMistakes").innerText = halfMistakes;
-  document.getElementById("resTotalMistakes").innerText = totalMistakes;
-  document.getElementById("resErrorPercent").innerText = `${errorPercentage}%`;
-
-  // Status Badges
-  document.getElementById("statusGradeC").innerHTML = errorPercentage <= 5 
-    ? `<span class="badge-pass">QUALIFIED (Errors &le; 5%)</span>` 
-    : `<span class="badge-fail">NOT QUALIFIED (Errors > 5%)</span>`;
-
-  document.getElementById("statusGradeD").innerHTML = errorPercentage <= 7 
-    ? `<span class="badge-pass">QUALIFIED (Errors &le; 7%)</span>` 
-    : `<span class="badge-fail">NOT QUALIFIED (Errors > 7%)</span>`;
-
-  // Render Diff Output
-  document.getElementById("diffContainer").innerHTML = diffHTML.join(" ");
-}
-
+// Reset Test Function
 function resetTest() {
-  document.getElementById("resultSection").style.display = "none";
-  document.getElementById("setupSection").style.display = "block";
-  document.getElementById("masterPassage").value = "";
+  clearInterval(timer);
+  timeLeft = timeLimit;
+  isTestStarted = false;
+  totalTypedChars = 0;
+  correctTypedChars = 0;
+
+  timerDisplay.innerText = `${timeLimit}s`;
+  wpmDisplay.innerText = "0";
+  accuracyDisplay.innerText = "100%";
+  
+  typingInput.value = "";
+  typingInput.disabled = false;
+  
+  initTest();
 }
+
+// Initialize on Load
+initTest();

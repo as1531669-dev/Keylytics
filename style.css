@@ -33,7 +33,7 @@ body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; height: 100vh; 
     border: 1px solid #cbd5e1; 
     border-radius: 12px; 
     padding: 40px; 
-    font-family: 'Courier New', Courier, monospace; 
+    font-family: 'JetBrains Mono', monospace; 
     font-size: 22px; 
     line-height: 1.8; 
     color: #0f172a;

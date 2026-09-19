@@ -66,11 +66,22 @@ function resumeTimer() {
     if(resumeBtn) resumeBtn.style.display = "none";
 }
 
-// Save PDF Logic
+// Save PDF Logic - Clean and crisp font for PDF export
 document.getElementById('save-pdf-btn').onclick = () => {
     const el = document.createElement('div');
-    el.innerHTML = `<h1 style="color:#2563eb; font-family:sans-serif;">Steno Transcription</h1><p style="white-space:pre-wrap; font-family:monospace; font-size:18px; line-height:1.6; margin-top:20px;">${typingBox.value}</p>`;
-    html2pdf().set({ margin: 20, filename: 'Keylytics_Steno.pdf' }).from(el).save();
+    el.innerHTML = `
+        <h1 style="color:#2563eb; font-family: 'Segoe UI', sans-serif; margin-bottom: 10px;">Steno Transcription</h1>
+        <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 20px;">
+        <p style="white-space: pre-wrap; font-family: 'JetBrains Mono', Courier, monospace; font-size: 15px; line-height: 1.8; color: #1e293b;">${typingBox.value}</p>
+    `;
+    
+    html2pdf().set({ 
+        margin: 20, 
+        filename: 'Keylytics_Steno.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(el).save();
 };
 
 // Save TXT Logic

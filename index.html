@@ -1,279 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Keylytics - Speed & Accuracy Practice</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keylytics PRO | Steno Skill Test</title>
+    <style>
+        /* Modern CSS - Sleek and clean UI */
+        :root { --primary: #2563eb; --dark: #0f172a; --bg: #f8fafc; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-    body {
-      background-color: #0f172a;
-      color: #f8fafc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+        .navbar { 
+            background: white; padding: 15px 40px; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); z-index: 100;
+        }
+        .brand { font-size: 26px; font-weight: 800; color: var(--dark); letter-spacing: -1px; }
+        .brand span { color: var(--primary); font-size: 10px; margin-left: 5px; border: 1.5px solid var(--primary); padding: 2px 5px; border-radius: 4px; vertical-align: middle; }
 
-    .container {
-      width: 100%;
-      max-width: 850px;
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    }
+        .stats-wrap { display: flex; gap: 40px; background: #f1f5f9; padding: 10px 30px; border-radius: 50px; }
+        .stat-box { text-align: center; font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 1px; }
+        .stat-box b { display: block; font-size: 22px; color: var(--dark); font-family: 'Courier New', monospace; }
 
-    h1 {
-      text-align: center;
-      color: #38bdf8;
-      font-size: 32px;
-      margin-bottom: 25px;
-      font-weight: 700;
-    }
+        .actions { display: flex; gap: 12px; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .btn-save { background: var(--primary); color: white; }
+        .btn-text { background: white; color: var(--dark); border: 1px solid #e2e8f0; }
+        .btn-reset { background: #fee2e2; color: #dc2626; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
 
-    .stats-container {
-      display: flex;
-      justify-content: space-around;
-      background: #334155;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-
-    .stat-box {
-      text-align: center;
-    }
-
-    .stat-box span {
-      display: block;
-      font-size: 24px;
-      font-weight: bold;
-      color: #38bdf8;
-    }
-
-    .stat-box label {
-      font-size: 14px;
-      color: #94a3b8;
-    }
-
-    .text-display {
-      background: #0f172a;
-      border: 2px solid #334155;
-      padding: 20px;
-      border-radius: 8px;
-      font-size: 18px;
-      line-height: 1.6;
-      height: 140px;
-      overflow-y: auto;
-      margin-bottom: 20px;
-      user-select: none;
-      white-space: pre-wrap;
-    }
-
-    .correct {
-      color: #4ade80;
-    }
-
-    .incorrect {
-      color: #f87171;
-      background-color: rgba(248, 113, 113, 0.2);
-      border-radius: 2px;
-    }
-
-    .current {
-      border-bottom: 2px solid #38bdf8;
-    }
-
-    textarea {
-      width: 100%;
-      height: 120px;
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 8px;
-      color: #f8fafc;
-      padding: 15px;
-      font-size: 18px;
-      resize: none;
-      outline: none;
-    }
-
-    textarea:focus {
-      border-color: #38bdf8;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 15px;
-    }
-
-    .btn {
-      background: #38bdf8;
-      color: #0f172a;
-      border: none;
-      padding: 10px 22px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .btn:hover {
-      background: #0284c7;
-      color: #ffffff;
-    }
-  </style>
+        .editor-main { flex: 1; padding: 30px; display: flex; justify-content: center; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); }
+        #typing-box { 
+            width: 100%; max-width: 1100px; background: white; 
+            border: 1px solid #e2e8f0; border-radius: 20px; padding: 45px; 
+            font-family: 'Courier New', Courier, monospace; font-size: 24px; 
+            line-height: 1.8; color: #1e293b; outline: none; resize: none; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        #typing-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+    </style>
 </head>
 <body>
+    <header class="navbar">
+        <div class="brand">Keylytics<span>PRO</span></div>
+        <div class="stats-wrap">
+            <div class="stat-box">TIME <b id="timer">00:00</b></div>
+            <div class="stat-box">WPM <b id="wpm">0</b></div>
+            <div class="stat-box">WORDS <b id="word-count">0</b></div>
+        </div>
+        <div class="actions">
+            <button id="save-pdf-btn" class="btn btn-save">Save PDF</button>
+            <button id="save-txt-btn" class="btn btn-text">Save Text</button>
+            <button onclick="location.reload()" class="btn btn-reset">Reset</button>
+        </div>
+    </header>
 
-<div class="container">
-  <h1>Keylytics</h1>
-
-  <!-- Stats Dashboard -->
-  <div class="stats-container">
-    <div class="stat-box">
-      <span id="timer">60s</span>
-      <label>Time Remaining</label>
+    <!-- Controls Container (Pause & Resume) -->
+    <div class="typing-controls" style="text-align: center; margin: 20px 0;">
+        <button id="pause-btn" onclick="pauseTimer()" style="padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #eab308; color: white; border: none; border-radius: 8px; cursor: pointer; margin-right: 10px;">Pause</button>
+        <button id="resume-btn" onclick="resumeTimer()" style="display: none; padding: 12px 24px; font-size: 16px; font-weight: 700; background-color: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">Resume</button>
     </div>
-    <div class="stat-box">
-      <span id="wpm">0</span>
-      <label>WPM</label>
-    </div>
-    <div class="stat-box">
-      <span id="accuracy">100%</span>
-      <label>Accuracy</label>
-    </div>
-  </div>
 
-  <!-- Passage Display -->
-  <div class="text-display" id="textDisplay"></div>
+    <main class="editor-main">
+        <textarea id="typing-box" spellcheck="false" placeholder="Transcription yahan shuru karein..."></textarea>
+    </main>
 
-  <!-- Typing Input Area -->
-  <textarea id="typingInput" placeholder="Start typing here to begin the test..."></textarea>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        let startTime, timerInterval, isStarted = false;
+        let isPaused = false;
+        let totalPausedTime = 0;
+        let pauseStartTime = 0;
 
-  <div class="controls">
-    <button class="btn" onclick="resetTest()">Restart</button>
-  </div>
-</div>
+        const typingBox = document.getElementById('typing-box');
+        const pauseBtn = document.getElementById("pause-btn");
+        const resumeBtn = document.getElementById("resume-btn");
 
-<script>
-  const samplePassage = "Practice makes a person perfect. Typing regularly with proper accuracy and speed helps in mastering stenography and computer speed examinations. Keylytics provides real-time feedback on your performance.";
+        typingBox.addEventListener('input', () => {
+            // Check if test is paused
+            if (isPaused) return;
 
-  let timeLimit = 60;
-  let timeLeft = timeLimit;
-  let timer = null;
-  let isTestStarted = false;
-  let totalTypedChars = 0;
-  let correctTypedChars = 0;
+            // Start timer on first keystroke
+            if (!isStarted) {
+                isStarted = true;
+                startTime = Date.now();
+                timerInterval = setInterval(updateStats, 1000);
+            }
+            
+            // Calculate words
+            let text = typingBox.value.trim();
+            let words = text ? text.split(/\s+/).length : 0;
+            document.getElementById('word-count').innerText = words;
 
-  const textDisplay = document.getElementById("textDisplay");
-  const typingInput = document.getElementById("typingInput");
-  const timerDisplay = document.getElementById("timer");
-  const wpmDisplay = document.getElementById("wpm");
-  const accuracyDisplay = document.getElementById("accuracy");
+            // ✨ AUTO SCROLL: Automatically scroll to bottom as text exceeds view box
+            typingBox.scrollTop = typingBox.scrollHeight;
+        });
 
-  function initTest() {
-    textDisplay.innerHTML = "";
-    samplePassage.split("").forEach((char, index) => {
-      const span = document.createElement("span");
-      span.innerText = char;
-      if (index === 0) span.classList.add("current");
-      textDisplay.appendChild(span);
-    });
-  }
+        function updateStats() {
+            if (isPaused) return;
 
-  typingInput.addEventListener("input", () => {
-    if (!isTestStarted) {
-      isTestStarted = true;
-      startTimer();
-    }
+            let now = Date.now();
+            let diffSecs = Math.floor((now - startTime - totalPausedTime) / 1000);
+            
+            let m = Math.floor(diffSecs / 60).toString().padStart(2, '0');
+            let s = (diffSecs % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${m}:${s}`;
+            
+            let wordCount = parseInt(document.getElementById('word-count').innerText);
+            if (diffSecs > 1) {
+                let wpm = Math.round(wordCount / (diffSecs / 60));
+                document.getElementById('wpm').innerText = wpm || 0;
+            }
+        }
 
-    const arrayQuote = textDisplay.querySelectorAll("span");
-    const arrayValue = typingInput.value.split("");
+        // Pause Logic
+        function pauseTimer() {
+            if (!isStarted || isPaused) return;
+            
+            isPaused = true;
+            pauseStartTime = Date.now();
+            typingBox.disabled = true;
+            
+            if(pauseBtn) pauseBtn.style.display = "none";
+            if(resumeBtn) resumeBtn.style.display = "inline-block";
+        }
 
-    correctTypedChars = 0;
-    totalTypedChars = arrayValue.length;
+        // Resume Logic
+        function resumeTimer() {
+            if (!isPaused) return;
+            
+            isPaused = false;
+            totalPausedTime += (Date.now() - pauseStartTime);
+            typingBox.disabled = false;
+            typingBox.focus();
+            
+            if(pauseBtn) pauseBtn.style.display = "inline-block";
+            if(resumeBtn) resumeBtn.style.display = "none";
+        }
 
-    arrayQuote.forEach((characterSpan, index) => {
-      const character = arrayValue[index];
+        // Save PDF Logic
+        document.getElementById('save-pdf-btn').onclick = () => {
+            const el = document.createElement('div');
+            el.innerHTML = `<h1 style="color:#2563eb; font-family:sans-serif;">Steno Transcription</h1><p style="white-space:pre-wrap; font-family:monospace; font-size:18px; line-height:1.6; margin-top:20px;">${typingBox.value}</p>`;
+            html2pdf().set({ margin: 20, filename: 'Keylytics_Steno.pdf' }).from(el).save();
+        };
 
-      characterSpan.classList.remove("current");
-
-      if (character == null) {
-        characterSpan.classList.remove("correct", "incorrect");
-      } else if (character === characterSpan.innerText) {
-        characterSpan.classList.add("correct");
-        characterSpan.classList.remove("incorrect");
-        correctTypedChars++;
-      } else {
-        characterSpan.classList.add("incorrect");
-        characterSpan.classList.remove("correct");
-      }
-    });
-
-    if (arrayValue.length < arrayQuote.length) {
-      arrayQuote[arrayValue.length].classList.add("current");
-    }
-
-    // Live Metrics Calculation
-    calculateMetrics();
-  });
-
-  function startTimer() {
-    timer = setInterval(() => {
-      if (timeLeft > 0) {
-        timeLeft--;
-        timerDisplay.innerText = `${timeLeft}s`;
-        calculateMetrics();
-      } else {
-        clearInterval(timer);
-        typingInput.disabled = true;
-      }
-    }, 1000);
-  }
-
-  function calculateMetrics() {
-    let timeSpent = timeLimit - timeLeft;
-    if (timeSpent <= 0) timeSpent = 1;
-
-    // WPM Calculation (5 characters = 1 word standard)
-    let wpm = Math.round((correctTypedChars / 5) / (timeSpent / 60));
-    wpmDisplay.innerText = wpm >= 0 && !isNaN(wpm) ? wpm : 0;
-
-    // Accuracy Calculation
-    let accuracy = totalTypedChars > 0 ? Math.round((correctTypedChars / totalTypedChars) * 100) : 100;
-    accuracyDisplay.innerText = `${accuracy}%`;
-  }
-
-  function resetTest() {
-    clearInterval(timer);
-    timeLeft = timeLimit;
-    isTestStarted = false;
-    totalTypedChars = 0;
-    correctTypedChars = 0;
-
-    timerDisplay.innerText = `${timeLimit}s`;
-    wpmDisplay.innerText = "0";
-    accuracyDisplay.innerText = "100%";
-    
-    typingInput.value = "";
-    typingInput.disabled = false;
-    
-    initTest();
-  }
-
-  // Initialize on Load
-  initTest();
-</script>
-
+        // Save TXT Logic
+        document.getElementById('save-txt-btn').onclick = () => {
+            const blob = new Blob([typingBox.value], { type: "text/plain" });
+            const a = document.createElement("a");
+            a.download = "note.txt"; 
+            a.href = URL.createObjectURL(blob); 
+            a.click();
+        };
+    </script>
 </body>
 </html>

@@ -62,7 +62,7 @@
     </div>
 
     <main class="editor-main">
-        <textarea id="typing-box" spellcheck="false" placeholder="Transcription yahan shuru karein..."></textarea>
+        <textarea id="typing-box" spellcheck="false" placeholder="Start typing your transcription here..."></textarea>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -77,22 +77,19 @@
         const resumeBtn = document.getElementById("resume-btn");
 
         typingBox.addEventListener('input', () => {
-            // Check if test is paused
             if (isPaused) return;
 
-            // Start timer on first keystroke
             if (!isStarted) {
                 isStarted = true;
                 startTime = Date.now();
                 timerInterval = setInterval(updateStats, 1000);
             }
             
-            // Calculate words
             let text = typingBox.value.trim();
             let words = text ? text.split(/\s+/).length : 0;
             document.getElementById('word-count').innerText = words;
 
-            // ✨ AUTO SCROLL: Automatically scroll to bottom as text exceeds view box
+            // AUTO SCROLL: Automatically scroll down when text exceeds view box
             typingBox.scrollTop = typingBox.scrollHeight;
         });
 
